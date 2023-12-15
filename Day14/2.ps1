@@ -1,6 +1,6 @@
 . ..\General\general.ps1
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-$inputVal = ImportInput
+$inputVal = ImportInput 
 
 function north ($inputVal) {
     $rocks = 0
@@ -142,40 +142,16 @@ function calcLoad ($beams) {
 $eastVal=@() + $inputVal
 $testoutput = @{}
 
-for ($i = 1; $i -lt 1000; $i++) {
-    if($i%100 -eq 0){
-        $i
-    }
+for ($i = 1; $i -lt 150; $i++) {
     $nortVal = north $eastVal
     $westVal = west $nortVal
     $southVal = south $westVal
     $eastVal = east $southVal
     $testoutput[$i] = calcLoad $eastVal 
-
-    if($testoutput[1] -eq $testoutput[$i] -and $i -ne 1){
-        $i
-        break
-    }
 }
-$testoutput[$i]
-$testoutput.GetEnumerator() |  ? { $_.Value -eq $testoutput[100] }
-# $testoutput[100]
-# $testoutput.GetEnumerator() | ? { $_.Value -eq "68" }
-# $testoutput[1]
-# $testoutput[2]
-# $testoutput[3]
-# $testoutput[4]
-# $testoutput[5]
-# $testoutput[6]
-# $testoutput[7]
-# $testoutput[8]
-# $testoutput[9]
-# $testoutput[10]
-# $testoutput[11]
-# $testoutput[12]
-# $testoutput[13]
-
-1000000000 % 7
+$double = $testoutput.GetEnumerator() | Group-Object Value | ? { $_.Count -gt 1 } | sort Count
+$rest = (1000000000 - $double[0].Group[-1].Name) % ($double[0].Group[-2].Name - $double[0].Group[-1].Name)
+$testoutput[$double[0].Group[-1].Name + $rest]
 
 $stopwatch.Stop()
 write-host ("That took {0} Seconds. It took {1} in Milliseconds" -f $Stopwatch.Elapsed.TotalSeconds, $Stopwatch.Elapsed.TotalMilliseconds)
